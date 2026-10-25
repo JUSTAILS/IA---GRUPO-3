@@ -4,7 +4,7 @@ import random
 import time
 
 # Tamaño de la cuadrícula nxn
-n = 3
+n = 2
 
 size= (n, n)
 
@@ -85,7 +85,7 @@ class VisualEnvironment:
                 self.grid[fila, columna] = 0
                 # Actualizar la memoria del agente para reflejar que la celda ha sido limpiada
                 mem[indice] = 1
-                energia -=2
+                energia -=1
         elif action == 'Up' and self.agent_pos[0] > 0:
             self.agent_pos[0] -= 1
             energia += 1

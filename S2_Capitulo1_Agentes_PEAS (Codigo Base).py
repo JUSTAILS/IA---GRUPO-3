@@ -3,10 +3,13 @@ import numpy as np
 import random
 import time
 
+energia = 0
+
 class VisualEnvironment2x2:
     def __init__(self):
         # Cuadrícula 2x2: 0 = Limpio, 1 = Sucio
         self.grid = np.random.choice([0, 1], size=(2, 2))
+        self.sucio = np.sum(self.grid) # conteo de celdas sucias
         # Posición inicial aleatoria (fila, columna)
         self.agent_pos = [random.randint(0, 1), random.randint(0, 1)]
         
@@ -41,16 +44,24 @@ class VisualEnvironment2x2:
         return self.agent_pos.copy(), self.grid[self.agent_pos[0], self.agent_pos[1]]
 
     def execute_action(self, action):
+
+        global energia
+
         if action == 'Suck':
             self.grid[self.agent_pos[0], self.agent_pos[1]] = 0
+            energia -= 1
         elif action == 'Up' and self.agent_pos[0] > 0:
             self.agent_pos[0] -= 1
+            energia += 1
         elif action == 'Down' and self.agent_pos[0] < 1:
             self.agent_pos[0] += 1
+            energia += 1
         elif action == 'Left' and self.agent_pos[1] > 0:
             self.agent_pos[1] -= 1
+            energia += 1
         elif action == 'Right' and self.agent_pos[1] < 1:
             self.agent_pos[1] += 1
+            energia += 1
 
     def is_completely_clean(self):
         return np.sum(self.grid) == 0
@@ -88,5 +99,7 @@ if __name__ == "__main__":
             print("¡Entorno 2x2 completamente limpio!")
             break
 
+    print("Rendimiento:", env.sucio / paso) # Métrica de rendimiento: celdas sucias / pasos
+    print("Gasto energetico:", energia) # Metrica de balance energetico: energia gastada
     plt.ioff()
     plt.show()
