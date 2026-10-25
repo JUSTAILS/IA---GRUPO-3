@@ -3,11 +3,15 @@ import numpy as np
 import random
 import time
 
-n = 4
+# Tamaño de la cuadrícula nxn
+n = 3
 
 size= (n, n)
 
 mem = [0]*(size[0]*size[1])
+
+# Metrica de balance energético
+energia = 0
 
 print(mem)
 
@@ -16,7 +20,7 @@ class VisualEnvironment:
 
         # Cuadrícula: 0 = Limpio, 1 = Sucio
         self.grid = np.random.choice([0, 1], size=size)
-        self.sucio = np.sum(self.grid)
+        self.sucio = np.sum(self.grid) # conteo de celdas sucias
 
         # Posición inicial aleatoria (fila, columna)
         self.agent_pos = [random.randint(0, n-1), random.randint(0, n-1)]
@@ -72,21 +76,28 @@ class VisualEnvironment:
 
     def execute_action(self, action):
 
-
+        global energia
         fila, columna = self.agent_pos
         indice = fila * n + columna
 
         if action == 'Suck':
-            self.grid[fila, columna] = 0
-            mem[indice] = 1
+            if self.grid[fila, columna] == 1:
+                self.grid[fila, columna] = 0
+                # Actualizar la memoria del agente para reflejar que la celda ha sido limpiada
+                mem[indice] = 1
+                energia -=2
         elif action == 'Up' and self.agent_pos[0] > 0:
             self.agent_pos[0] -= 1
+            energia += 1
         elif action == 'Down' and self.agent_pos[0] < n-1:
             self.agent_pos[0] += 1
+            energia += 1
         elif action == 'Left' and self.agent_pos[1] > 0:
             self.agent_pos[1] -= 1
+            energia += 1
         elif action == 'Right' and self.agent_pos[1] < n-1:
             self.agent_pos[1] += 1
+            energia += 1
 
     def is_completely_clean(self):
         return np.sum(self.grid) == 0
@@ -147,6 +158,7 @@ if __name__ == "__main__":
             print(f"¡Entorno {n}x{n} completamente limpio!")
             break
 
-    print("Rendimiento:", env.sucio / paso)
+    print("Rendimiento:", env.sucio / paso) # Métrica de rendimiento: celdas sucias / pasos
+    print("Gasto energetico:", energia) # Metrica de balance energetico: energia gastada
     plt.ioff()
     plt.show()
